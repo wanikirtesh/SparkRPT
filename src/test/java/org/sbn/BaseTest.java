@@ -1,8 +1,11 @@
 package org.sbn;
 
 import com.sbn.util.DriverManager;
+import com.sbn.util.Reporter;
 import org.openqa.selenium.WebDriver;
 
+import org.testng.ITest;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
@@ -15,12 +18,14 @@ import java.util.Date;
 public class BaseTest {
     protected WebDriver driver;
     @BeforeSuite
-    public void initReporting(){
+    public void initReporting(ITestResult iTestResult){
+        Reporter.startSuite(iTestResult);
 
     }
 
     @AfterSuite
     public void flushReports(){
+        Reporter.endSuite();
 
     }
 
@@ -30,7 +35,8 @@ public class BaseTest {
     }
 
     @AfterMethod
-    public void completeTest(){
+    public void completeTest(ITestResult testResult){
+        Reporter.endTest(testResult);
         DriverManager.closeDriver();
 
     }

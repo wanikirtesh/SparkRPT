@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.AbstractDriverOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.net.MalformedURLException;
@@ -16,20 +17,25 @@ public class DriverManager {
     private static WebDriver driver;
     private static String remoteWebdriverUrl = "http://localhost:4444";
     public static WebDriver getDriver(String browser) throws MalformedURLException {
-        AbstractDriverOptions option =null;
+        DesiredCapabilities option =new DesiredCapabilities();
         if(driver == null){
             switch (browser.toLowerCase()){
                 case "firefox":
-                    option = new FirefoxOptions();
+                    FirefoxOptions firefoxOptions = new FirefoxOptions();
+                    //firefoxOptions.addArguments("--headless");
+                    driver = new RemoteWebDriver(new URL(remoteWebdriverUrl),firefoxOptions);
                     break;
                 case "chrome":
                 default:
-                    option = new ChromeOptions();
+                    ChromeOptions chromeOptions = new ChromeOptions();
+                    chromeOptions.addArguments("headless","true");
+                   // chromeOptions.setHeadless(true);
+                    driver = new RemoteWebDriver(new URL(remoteWebdriverUrl),chromeOptions);
             }
+
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+            driver.manage().window().maximize();
         }
-        driver = new RemoteWebDriver(new URL(remoteWebdriverUrl),option);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.manage().window().maximize();
         return driver;
     }
 
